@@ -39,15 +39,15 @@ fn parse(input: &str) -> Vec<Strategy> {
     strategies.map(parse_choices).collect()
 }
 
-fn score(strategy: &Strategy) -> i32 {
+fn score1(strategy: &Strategy) -> i32 {
     let Strategy{opponent, yours} = strategy;
     if  (*opponent as i32) == (*yours as i32) {
-        3
+        *yours as i32 + 4
     }
     else if (*opponent as i32 + 1).rem_euclid(3) == (*yours as i32) {
-        6
+        *yours as i32 + 7
     } else {
-        0
+        *yours as i32 + 1
     }
 }
 
@@ -60,19 +60,15 @@ fn score2(strategy: &Strategy) -> i32 {
     }
 }
 
-fn task1(strategies: Vec<Strategy>) -> i32 {
-    strategies.iter().map(|strategy: &Strategy| -> i32 {
-        (strategy.yours as i32) + score(strategy) + 1
-    }).sum::<i32>()
-}
 
-fn task2(strategies: Vec<Strategy>) -> i32 {
-     strategies.iter().map(score2).sum::<i32>()
+fn task<F>(strategies: Vec<Strategy>, score: F) -> i32
+where F: Fn(&Strategy) -> i32 {
+     strategies.iter().map(score).sum::<i32>()
 }
 
 fn main() {
     let input = fs::read_to_string("input.txt").unwrap().trim().to_string();
     let strategies = parse(&input);
-    println!("{}", task1(strategies.to_vec()));
-    println!("{}", task2(strategies.to_vec()));
+    println!("{}", task(strategies.to_vec(), score1));
+    println!("{}", task(strategies.to_vec(), score2));
 }
